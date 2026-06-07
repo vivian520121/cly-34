@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>配色灵感 - 专业配色方案生成工具</title>
+  <meta name="description" content="一款专业的在线配色灵感工具，支持随机配色生成、色值转换、风格筛选、本地收藏和实时预览功能。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">🎨</div>
+        <h1 class="logo-text">配色灵感</h1>
+      </div>
+      <p class="subtitle">发现、预览和收藏完美的配色方案 · 按空格键快速刷新</p>
+    </header>
+
+    <div class="main-layout">
+      <aside class="sidebar-left">
+        <div class="panel">
+          <h3 class="panel-title">🎯 配色模式</h3>
+          <div class="btn-group mode-selector">
+            <button class="btn mode-btn" data-mode="mono">单色</button>
+            <button class="btn mode-btn" data-mode="dual">双色</button>
+            <button class="btn mode-btn" data-mode="triple">三色渐变</button>
+            <button class="btn mode-btn active" data-mode="quad">四色组合</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">🏷️ 风格筛选</h3>
+          <div class="btn-group">
+            <button class="btn style-btn" data-style="morandi">莫兰迪</button>
+            <button class="btn style-btn" data-style="macaron">马卡龙</button>
+            <button class="btn style-btn" data-style="vintage">复古</button>
+            <button class="btn style-btn" data-style="cool">冷色调</button>
+            <button class="btn style-btn" data-style="warm">暖色调</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">💖 我的收藏</h3>
+          <div id="favorites-list">
+            <div class="empty-favorites">暂无收藏的配色方案</div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="palette-section">
+        <div class="palette-controls">
+          <div class="action-buttons">
+            <button id="refresh-btn" class="btn btn-primary">✨ 刷新配色</button>
+            <button id="favorite-btn" class="btn btn-favorite">🤍 收藏</button>
+          </div>
+        </div>
+
+        <div id="palette-container" class="palette-quad"></div>
+
+        <div id="color-values"></div>
+      </main>
+
+      <aside class="sidebar-right">
+        <div class="panel">
+          <h3 class="panel-title">👁️ 实时预览</h3>
+          <div class="preview-section">
+            <div>
+              <div id="preview-text">创意无限</div>
+              <p class="preview-desc">文字配色预览效果</p>
+            </div>
+            <div>
+              <button id="preview-btn">立即开始</button>
+            </div>
+            <div id="preview-card">
+              <div class="card-title">卡片标题</div>
+              <p class="card-text">这是一段示例卡片文本，用于展示配色方案在实际卡片设计中的应用效果。</p>
+              <button class="card-btn">了解更多</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">🎯 取色器</h3>
+          <div class="color-picker-wrapper">
+            <input type="color" id="color-picker" value="#06b6d4" title="选择颜色">
+            <button id="picker-btn" class="btn">📸 屏幕取色</button>
+          </div>
+          <p class="preview-desc" style="margin-top: 12px; font-size: 13px;">
+            选取颜色后将自动替换当前配色的第一个颜色
+          </p>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">⌨️ 快捷键</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+            <div style="display: flex; justify-content: space-between;">
+              <span>空格键</span>
+              <code style="background: var(--bg-tertiary); padding: 2px 8px; border-radius: 4px; font-family: 'Space Mono', monospace;">刷新配色</code>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>点击色块</span>
+              <code style="background: var(--bg-tertiary); padding: 2px 8px; border-radius: 4px; font-family: 'Space Mono', monospace;">复制色值</code>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="js/colorUtils.js"></script>
+  <script src="js/paletteGenerator.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/uiController.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
