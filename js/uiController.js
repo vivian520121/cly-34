@@ -199,12 +199,19 @@
     var primary = colors[0].hex;
     var secondary = colors[1] ? colors[1].hex : colors[0].hex;
     var accent = colors[2] ? colors[2].hex : colors[0].hex;
+    var angle = palette.gradient && palette.gradient.angle !== undefined ? palette.gradient.angle : 135;
 
     elements.previewText.style.color = primary;
     elements.previewBtn.style.backgroundColor = primary;
     elements.previewBtn.style.color = CU.getContrastColor(primary);
 
-    elements.previewCard.style.background = 'linear-gradient(135deg, ' + primary + ', ' + secondary + ')';
+    var cardGradient;
+    if (palette.mode === 'triple' && colors.length >= 3) {
+      cardGradient = 'linear-gradient(' + angle + 'deg, ' + primary + ', ' + secondary + ', ' + accent + ')';
+    } else {
+      cardGradient = 'linear-gradient(' + angle + 'deg, ' + primary + ', ' + secondary + ')';
+    }
+    elements.previewCard.style.background = cardGradient;
     elements.previewCard.style.color = CU.getContrastColor(primary);
 
     var cardBtn = elements.previewCard.querySelector('.card-btn');
