@@ -211,6 +211,82 @@ header {
   flex-wrap: wrap;
 }
 
+.angle-control {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.angle-control.hidden {
+  display: none;
+}
+
+.angle-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.angle-label span:last-child {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+#angle-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#angle-slider:hover {
+  background: var(--accent-glow);
+}
+
+#angle-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+  transition: var(--transition);
+}
+
+#angle-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+#angle-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 12px var(--accent-glow);
+  transition: var(--transition);
+}
+
+#angle-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
 .action-buttons {
   display: flex;
   gap: 12px;

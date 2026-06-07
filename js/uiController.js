@@ -37,6 +37,9 @@
     elements.colorPicker = $('#color-picker');
     elements.pickerBtn = $('#picker-btn');
     elements.toast = $('#toast');
+    elements.angleControl = $('#angle-control');
+    elements.angleSlider = $('#angle-slider');
+    elements.angleValue = $('#angle-value');
   }
 
   function showToast(message) {
@@ -239,6 +242,8 @@
         state.currentPalette = palette;
         state.currentMode = palette.mode;
         updateModeButtons();
+        updateAngleControl();
+        updateAngleSlider();
         renderPalette();
         showToast('已应用收藏的配色');
       });
@@ -268,17 +273,45 @@
     });
   }
 
+  function updateAngleControl() {
+    if (state.currentMode === 'triple') {
+      elements.angleControl.classList.remove('hidden');
+    } else {
+      elements.angleControl.classList.add('hidden');
+    }
+  }
+
+  function updateAngleSlider() {
+    var palette = state.currentPalette;
+    if (palette && palette.gradient && palette.gradient.angle !== undefined) {
+      elements.angleSlider.value = palette.gradient.angle;
+      elements.angleValue.textContent = palette.gradient.angle + '°';
+    }
+  }
+
   function bindEvents() {
     elements.refreshBtn.addEventListener('click', function() {
       state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
+      updateAngleSlider();
       renderPalette();
+    });
+
+    elements.angleSlider.addEventListener('input', function(e) {
+      var angle = parseInt(e.target.value, 10);
+      if (state.currentPalette && state.currentPalette.gradient) {
+        state.currentPalette.gradient.angle = angle;
+        elements.angleValue.textContent = angle + '°';
+        renderPalette();
+      }
     });
 
     elements.modeBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
         state.currentMode = btn.getAttribute('data-mode');
         updateModeButtons();
+        updateAngleControl();
         state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
+        updateAngleSlider();
         renderPalette();
       });
     });
@@ -295,6 +328,7 @@
         state.currentStyle = state.selectedStyles.length > 0 ? state.selectedStyles[0] : null;
         updateStyleButtons();
         state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
+        updateAngleSlider();
         renderPalette();
       });
     });
@@ -349,6 +383,7 @@
       if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
         state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
+        updateAngleSlider();
         renderPalette();
       }
     });
@@ -358,6 +393,8 @@
     initElements();
     bindEvents();
     state.currentPalette = PG.createPalette(state.currentMode, null);
+    updateAngleControl();
+    updateAngleSlider();
     renderPalette();
     renderFavorites();
     updateModeButtons();
