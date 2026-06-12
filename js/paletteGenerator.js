@@ -183,6 +183,33 @@
     return palette;
   }
 
+  function refreshPaletteWithLocks(existingPalette, lockedIndices, style) {
+    var mode = existingPalette.mode;
+    var newColors = existingPalette.colors.slice();
+    var count = newColors.length;
+
+    var freshColors = generatePalette(mode, style);
+
+    for (var i = 0; i < count; i++) {
+      if (lockedIndices.indexOf(i) === -1) {
+        newColors[i] = freshColors[i];
+      }
+    }
+
+    var palette = {
+      id: createPaletteId(),
+      mode: mode,
+      colors: newColors,
+      style: detectStyles(newColors),
+      gradient: {
+        angle: existingPalette.gradient ? existingPalette.gradient.angle : CU.randomInt(0, 360),
+        type: 'linear'
+      },
+      createdAt: Date.now()
+    };
+    return palette;
+  }
+
   global.PaletteGenerator = {
     createPalette: createPalette,
     generatePalette: generatePalette,
@@ -191,6 +218,7 @@
     generateTriple: generateTriple,
     generateQuad: generateQuad,
     detectStyles: detectStyles,
-    applyStyleConstraints: applyStyleConstraints
+    applyStyleConstraints: applyStyleConstraints,
+    refreshPaletteWithLocks: refreshPaletteWithLocks
   };
 })(window);

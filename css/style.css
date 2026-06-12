@@ -192,6 +192,21 @@ header {
   border-color: rgba(236, 72, 153, 0.5);
 }
 
+.btn-unlock-all {
+  background: rgba(6, 182, 212, 0.1);
+  border-color: rgba(6, 182, 212, 0.3);
+  color: var(--accent-primary);
+}
+
+.btn-unlock-all:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: rgba(6, 182, 212, 0.5);
+}
+
+.btn-unlock-all.has-locks {
+  animation: pulse 2s infinite;
+}
+
 .palette-section {
   animation: fadeIn 0.5s ease-out 0.1s both;
 }
@@ -369,6 +384,67 @@ header {
 .color-swatch:hover .swatch-label {
   opacity: 1;
   transform: translateY(0);
+}
+
+.color-swatch.locked {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: -3px;
+}
+
+.color-swatch.locked::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(0, 0, 0, 0.1) 10px,
+    rgba(0, 0, 0, 0.1) 20px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lock-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: var(--transition);
+  z-index: 5;
+}
+
+.color-swatch:hover .lock-btn,
+.lock-btn.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lock-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.lock-btn.active {
+  background: rgba(6, 182, 212, 0.8);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .gradient-overlay {
@@ -794,6 +870,16 @@ header {
 
   .color-swatch::before {
     opacity: 1;
+  }
+
+  .lock-btn {
+    opacity: 1;
+    transform: scale(1);
+    width: 32px;
+    height: 32px;
+    top: 8px;
+    right: 8px;
+    font-size: 14px;
   }
 
   #preview-text {

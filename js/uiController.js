@@ -10,7 +10,8 @@
     currentMode: 'quad',
     currentStyle: null,
     activeFormat: 'hex',
-    selectedStyles: []
+    selectedStyles: [],
+    lockedColors: []
   };
 
   var elements = {};
@@ -30,6 +31,7 @@
     elements.styleBtns = $$('.style-btn');
     elements.refreshBtn = $('#refresh-btn');
     elements.favoriteBtn = $('#favorite-btn');
+    elements.unlockAllBtn = $('#unlock-all-btn');
     elements.favoritesList = $('#favorites-list');
     elements.previewText = $('#preview-text');
     elements.previewBtn = $('#preview-btn');
@@ -104,7 +106,8 @@
 
     colors.forEach(function(color, index) {
       var swatch = document.createElement('div');
-      swatch.className = 'color-swatch';
+      var isLocked = state.lockedColors.indexOf(index) !== -1;
+      swatch.className = 'color-swatch' + (isLocked ? ' locked' : '');
       swatch.style.backgroundColor = color.hex;
       swatch.style.color = CU.getContrastColor(color.hex);
       swatch.style.animationDelay = (index * 0.1) + 's';
@@ -122,8 +125,19 @@
         }
       }
 
+      var lockBtn = document.createElement('button');
+      lockBtn.className = 'lock-btn' + (isLocked ? ' active' : '');
+      lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
+      lockBtn.title = isLocked ? '点击解锁' : '点击锁定';
+      lockBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleLock(index);
+      });
+
       swatch.innerHTML = '<span class="swatch-label">' + color.hex + '</span>';
+      swatch.appendChild(lockBtn);
       swatch.setAttribute('data-color', color.hex);
+      swatch.setAttribute('data-index', index);
 
       swatch.addEventListener('click', function() {
         copyToClipboard(color[state.activeFormat]);
@@ -179,6 +193,35 @@
 
       container.appendChild(card);
     });
+  }
+
+  function toggleLock(index) {
+    var idx = state.lockedColors.indexOf(index);
+    if (idx === -1) {
+      state.lockedColors.push(index);
+      showToast('已锁定第 ' + (index + 1) + ' 个色块');
+    } else {
+      state.lockedColors.splice(idx, 1);
+      showToast('已解锁第 ' + (index + 1) + ' 个色块');
+    }
+    renderPalette();
+    updateUnlockAllButton();
+  }
+
+  function unlockAll() {
+    if (state.lockedColors.length === 0) return;
+    state.lockedColors = [];
+    renderPalette();
+    updateUnlockAllButton();
+    showToast('已解锁全部色块');
+  }
+
+  function updateUnlockAllButton() {
+    if (elements.unlockAllBtn) {
+      var hasLocks = state.lockedColors.length > 0;
+      elements.unlockAllBtn.classList.toggle('has-locks', hasLocks);
+      elements.unlockAllBtn.style.display = hasLocks ? 'inline-flex' : 'none';
+    }
   }
 
   function updateFavoriteButton() {
@@ -296,12 +339,31 @@
     }
   }
 
+  function refreshPalette() {
+    if (state.lockedColors.length > 0 && state.currentPalette) {
+      state.currentPalette = PG.refreshPaletteWithLocks(
+        state.currentPalette,
+        state.lockedColors,
+        state.currentStyle
+      );
+    } else {
+      state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
+    }
+    updateAngleSlider();
+    renderPalette();
+    updateUnlockAllButton();
+  }
+
   function bindEvents() {
     elements.refreshBtn.addEventListener('click', function() {
-      state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
-      updateAngleSlider();
-      renderPalette();
+      refreshPalette();
     });
+
+    if (elements.unlockAllBtn) {
+      elements.unlockAllBtn.addEventListener('click', function() {
+        unlockAll();
+      });
+    }
 
     elements.angleSlider.addEventListener('input', function(e) {
       var angle = parseInt(e.target.value, 10);
@@ -315,8 +377,10 @@
     elements.modeBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
         state.currentMode = btn.getAttribute('data-mode');
+        state.lockedColors = [];
         updateModeButtons();
         updateAngleControl();
+        updateUnlockAllButton();
         state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
         updateAngleSlider();
         renderPalette();
@@ -334,9 +398,7 @@
         }
         state.currentStyle = state.selectedStyles.length > 0 ? state.selectedStyles[0] : null;
         updateStyleButtons();
-        state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
-        updateAngleSlider();
-        renderPalette();
+        refreshPalette();
       });
     });
 
@@ -389,9 +451,7 @@
     document.addEventListener('keydown', function(e) {
       if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
-        state.currentPalette = PG.createPalette(state.currentMode, state.currentStyle);
-        updateAngleSlider();
-        renderPalette();
+        refreshPalette();
       }
     });
   }
@@ -402,6 +462,7 @@
     state.currentPalette = PG.createPalette(state.currentMode, null);
     updateAngleControl();
     updateAngleSlider();
+    updateUnlockAllButton();
     renderPalette();
     renderFavorites();
     updateModeButtons();
@@ -414,6 +475,9 @@
     renderFavorites: renderFavorites,
     showToast: showToast,
     copyToClipboard: copyToClipboard,
+    toggleLock: toggleLock,
+    unlockAll: unlockAll,
+    refreshPalette: refreshPalette,
     getState: function() { return state; }
   };
 })(window);
